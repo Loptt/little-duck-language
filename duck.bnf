@@ -1,0 +1,84 @@
+
+_digit : '1'-'9' ;
+_alpha : 'a'-'z' | 'A'-'Z';
+_id : _alpha {(_digit | _alpha)};
+_integer : _digit {_digit};
+_float : _digit {_digit} '.' _digit {_digit};
+_string : '"' {(_digit | _alpha | ' ')} '"';
+
+!ws : ' ' | '\t' | '\n' | '\r';
+
+program : 'p' 'r' 'o' 'g' 'r' 'a' 'm';
+print : 'p' 'r' 'i' 'n' 't';
+else : 'e' 'l' 's' 'e';
+if : 'i' 'f';
+var : 'v' 'a' 'r';
+inttype : 'i' 'n' 't';
+floattype : 'f' 'l' 'o' 'a' 't';
+plus : '+';
+minus : '-';
+mult : '*';
+div : '/';
+relop : '<' | '>' | '<' '>';
+
+integer : _integer;
+float : _float;
+string : _string;
+id : _id;
+
+
+Programa : program id ":" Vars Bloque
+         | program id ":" Bloque;
+
+Bloque : "{" Estatutos "}";
+
+Estatutos : Estatuto Estatutos
+          | Estatuto
+          | empty;
+
+Estatuto : Asignacion
+         | Condicion
+         | Escritura;
+
+Asignacion : id "=" Expresion ";";
+
+Expresion : Exp
+          | Exp relop Exp;
+
+Exp : Termino
+    | Termino plus Termino
+    | Termino minus Termino;
+
+Termino : Factor
+        | Factor mult Factor
+        | Factor div Factor;
+
+Factor : "(" Expresion ")"
+       | plus Varcte
+       | minus Varcte
+       | Varcte;
+
+Varcte : id
+       | integer
+       | float;
+
+Condicion : if "(" Expresion ")" Bloque ";"
+          | if "(" Expresion ")" Bloque else Bloque ";";
+
+Escritura : print "(" Escrituraarg ")" ";";
+
+Escrituraarg : Expresion "," Escrituraarg
+             | string "," Escrituraarg
+             | Expresion
+             | string;
+
+Vars : var Varargs;
+
+Varargs : Ids ":" Tipo ";" Varargs
+        | Ids ":" Tipo ";";
+    
+Ids : id "," Ids
+    | id;
+
+Tipo : inttype
+     | floattype;
